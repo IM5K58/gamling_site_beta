@@ -1,4 +1,4 @@
-FROM openjdk:21-jdk-slim AS builder
+FROM eclipse-temurin:21-jdk-slim AS builder
 
 WORKDIR /app
 
@@ -15,7 +15,7 @@ RUN chmod +x ./gradlew
 RUN ./gradlew bootJar -x test
 
 
-FROM openjdk:21-jdk-slim
+FROM eclipse-temurin:21-jdk-slim
 
 WORKDIR /app
 
