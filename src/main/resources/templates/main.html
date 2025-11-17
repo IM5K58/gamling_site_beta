@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>랜덤 게임소</title>
+    <style>
+        body { background-color: #E0E0E0; margin: 0; font-family: 'Arial', sans-serif; text-align: center; }
+        header { padding: 20px; background-color: #D6D6D6; }
+        .money-display { position: absolute; top: 20px; right: 20px; font-weight: bold; font-size: 1.2rem; }
+        .container { margin-top: 50px; }
+        h1 { margin-bottom: 10px; }
+        p.subtitle { color: #555; font-size: 0.9rem; margin-bottom: 40px; }
+        .card-container { display: flex; justify-content: center; gap: 30px; }
+        .card {
+            width: 250px; height: 350px; background-color: #E6B0AA;
+            display: flex; align-items: flex-end; justify-content: center;
+            padding-bottom: 20px; border-radius: 5px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            cursor: pointer; transition: transform 0.2s; text-decoration: none; color: black; font-weight: bold;
+        }
+        .card:hover { transform: translateY(-5px); background-color: #D98880; }
+    </style>
+</head>
+<body>
+<header>
+    <div class="money-display" th:if="${user != null}">
+        현재 소지금 : <span th:text="${#numbers.formatInteger(user.money, 3, 'COMMA')}">0</span>원
+    </div>
+    <div class="money-display" th:unless="${user != null}">로그인이 필요합니다.</div>
+</header>
+
+<div class="container">
+    <h1>랜덤 게임소!</h1>
+    <p class="subtitle">도박은 불확실에 베팅하는 확실한 실패입니다.</p>
+
+    <div class="card-container">
+        <a href="/game/lotto" class="card">로또 게임</a>
+        <a href="#" class="card" onclick="alert('준비 중입니다!')">경주 게임</a>
+        <a href="/ranking" class="card">순위 보기</a>
+    </div>
+</div>
+
+<script th:inline="javascript">
+    var user = [[${user}]];
+    if (user == null) {
+        var nickname = prompt("게임에 참여할 닉네임을 입력하세요! (새 게임 시작)");
+        if (nickname) {
+            var form = document.createElement("form");
+            form.method = "POST";
+            form.action = "/start-game";
+            var input = document.createElement("input");
+            input.type = "hidden";
+            input.name = "nickname";
+            input.value = nickname;
+            form.appendChild(input);
+            document.body.appendChild(form);
+            form.submit();
+        } else {
+            alert("닉네임 없이는 게임을 할 수 없습니다.");
+            location.reload();
+        }
+    }
+</script>
+</body>
+</html>

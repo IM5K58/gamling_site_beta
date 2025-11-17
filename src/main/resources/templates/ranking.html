@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>명예의 전당</title>
+    <style>
+        body { background-color: #f0f0f0; font-family: 'Arial', sans-serif; text-align: center; padding: 30px; }
+        .container { max-width: 700px; margin: 0 auto; background: white; padding: 40px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+
+        h1 { color: #d35400; margin-bottom: 30px; }
+
+        /* 순위표 스타일 */
+        table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
+        th, td { padding: 15px; border-bottom: 1px solid #eee; text-align: center; }
+        th { background-color: #f8f9fa; color: #555; font-weight: bold; }
+
+        /* 1, 2, 3등 강조 스타일 */
+        tr.rank-1 td { font-weight: bold; color: #f1c40f; font-size: 1.2rem; background-color: #fff9db; } /* 금색 */
+        tr.rank-2 td { font-weight: bold; color: #95a5a6; background-color: #f8f9fa; } /* 은색 */
+        tr.rank-3 td { font-weight: bold; color: #d35400; background-color: #fff0e6; } /* 동색 */
+
+        .back-btn { display: inline-block; padding: 10px 20px; background-color: #3498db; color: white; text-decoration: none; border-radius: 5px; font-weight: bold; transition: 0.3s; }
+        .back-btn:hover { background-color: #2980b9; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🏆 명예의 전당 🏆</h1>
+    <p>가장 많은 자산을 보유한 상위 20명입니다.</p>
+
+    <table>
+        <thead>
+        <tr>
+            <th width="20%">순위</th>
+            <th width="40%">닉네임</th>
+            <th width="40%">자산</th>
+        </tr>
+        </thead>
+        <tbody>
+        <th:block th:each="user, userStat : ${topUsers}">
+            <tr th:classappend="|rank-${userStat.count}|">
+                <td>
+                    <span th:if="${userStat.count == 1}">🥇 1등</span>
+                    <span th:if="${userStat.count == 2}">🥈 2등</span>
+                    <span th:if="${userStat.count == 3}">🥉 3등</span>
+                    <span th:if="${userStat.count > 3}" th:text="${userStat.count} + '등'"></span>
+                </td>
+                <td th:text="${user.userName}">닉네임</td>
+                <td th:text="${#numbers.formatInteger(user.money, 0, 'COMMA')} + '원'">0원</td>
+            </tr>
+        </th:block>
+
+        <tr th:if="${#lists.isEmpty(topUsers)}">
+            <td colspan="3">아직 등록된 랭커가 없습니다. 게임을 시작해보세요!</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <a href="/" class="back-btn">메인으로 돌아가기</a>
+</div>
+
+</body>
+</html>

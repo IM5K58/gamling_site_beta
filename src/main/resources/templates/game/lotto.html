@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>로또 게임</title>
+    <style>
+        body { background-color: #f0f0f0; font-family: sans-serif; text-align: center; padding: 30px; }
+        .container { background: white; max-width: 800px; margin: 0 auto; padding: 40px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        .price-info { color: #888; margin-bottom: 20px; }
+        input[type="number"] { padding: 10px; font-size: 1.2rem; width: 100px; text-align: center; }
+        button { padding: 10px 20px; font-size: 1.2rem; background-color: #E6B0AA; border: none; border-radius: 5px; cursor: pointer; color: white; font-weight: bold; }
+        button:hover { background-color: #D98880; }
+
+        .result-box { margin-top: 30px; border-top: 2px solid #eee; padding-top: 20px; }
+        .winning-numbers span { display: inline-block; width: 40px; height: 40px; line-height: 40px; background-color: #fbc531; border-radius: 50%; color: white; font-weight: bold; margin: 5px; }
+        .bonus-number { background-color: #e1b12c !important; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 10px; }
+        th { background-color: #f9f9f9; }
+        .win { background-color: #fff3cd; font-weight: bold; color: #856404; }
+
+        .back-btn { display: inline-block; margin-top: 20px; text-decoration: none; color: #555; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🎰 인생 역전 로또 🎰</h1>
+    <h3 th:text="|현재 소지금: ${#numbers.formatInteger(user.money, 3, 'COMMA')}원|"></h3>
+
+    <div class="game-input">
+        <p class="price-info">1장당 2,000원입니다.</p>
+
+        <form action="/game/lotto/buy" method="POST">
+            <input type="number" name="quantity" min="1" placeholder="수량" required>
+            <button type="submit">구매하기</button>
+        </form>
+
+        <p style="color: red; font-weight: bold;" th:if="${error}" th:text="${error}"></p>
+    </div>
+
+    <div class="result-box" th:if="${result != null}">
+        <h2>🎉 추첨 결과 🎉</h2>
+
+        <div class="winning-numbers">
+            <p>이번 주 당첨 번호</p>
+            <span th:each="num : ${result.winningLotto.numbers}" th:text="${num}"></span>
+            <span>+</span>
+            <span class="bonus-number" th:text="${result.bonusNumber}"></span>
+        </div>
+
+        <h3>📜 당신의 당첨 내역</h3>
+        <table>
+            <thead>
+            <tr>
+                <th>등수</th>
+                <th>조건</th>
+                <th>당첨금</th>
+                <th>당첨 횟수</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:classappend="${result.stats.get(T(woowa.gamble.domain.WinningRank).FIRST) > 0} ? 'win'">
+                <td>1등</td>
+                <td>6개 일치</td>
+                <td>20억 원</td>
+                <td th:text="${result.stats.getOrDefault(T(woowa.gamble.domain.WinningRank).FIRST, 0)} + '회'"></td>
+            </tr>
+            <tr th:classappend="${result.stats.get(T(woowa.gamble.domain.WinningRank).SECOND) > 0} ? 'win'">
+                <td>2등</td>
+                <td>5개 + 보너스</td>
+                <td>3,000만 원</td>
+                <td th:text="${result.stats.getOrDefault(T(woowa.gamble.domain.WinningRank).SECOND, 0)} + '회'"></td>
+            </tr>
+            <tr th:classappend="${result.stats.get(T(woowa.gamble.domain.WinningRank).THIRD) > 0} ? 'win'">
+                <td>3등</td>
+                <td>5개 일치</td>
+                <td>150만 원</td>
+                <td th:text="${result.stats.getOrDefault(T(woowa.gamble.domain.WinningRank).THIRD, 0)} + '회'"></td>
+            </tr>
+            <tr th:classappend="${result.stats.get(T(woowa.gamble.domain.WinningRank).FOURTH) > 0} ? 'win'">
+                <td>4등</td>
+                <td>4개 일치</td>
+                <td>5만 원</td>
+                <td th:text="${result.stats.getOrDefault(T(woowa.gamble.domain.WinningRank).FOURTH, 0)} + '회'"></td>
+            </tr>
+            <tr th:classappend="${result.stats.get(T(woowa.gamble.domain.WinningRank).FIFTH) > 0} ? 'win'">
+                <td>5등</td>
+                <td>3개 일치</td>
+                <td>5,000 원</td>
+                <td th:text="${result.stats.getOrDefault(T(woowa.gamble.domain.WinningRank).FIFTH, 0)} + '회'"></td>
+            </tr>
+            </tbody>
+        </table>
+
+        <h3 style="color: blue; margin-top: 20px;">
+            총 당첨금: <span th:text="${#numbers.formatInteger(result.totalPrize, 3, 'COMMA')}">0</span>원
+        </h3>
+    </div>
+
+    <a href="/" class="back-btn">⬅ 메인으로 돌아가기</a>
+</div>
+
+</body>
+</html>
